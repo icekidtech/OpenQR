@@ -7,6 +7,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -21,6 +23,9 @@ type Config struct {
 }
 
 func Load() (*Config, error) {
+	// Load .env from the working directory so `go run ./cmd/api` just works.
+	// Missing .env is fine — env vars can come from the process environment.
+	_ = godotenv.Load()
 	cfg := &Config{
 		Port:          getenv("PORT", ""),
 		DatabaseURL:   getenv("DATABASE_URL", ""),
