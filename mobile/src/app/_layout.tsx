@@ -2,13 +2,22 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import * as WebBrowser from 'expo-web-browser';
 import { useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
 
 import { AuthProvider, useAuth } from '@/lib/auth';
 import { colors } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
+
+// On web, complete the OAuth popup handshake when the app loads inside the popup
+// window after a Google/Apple redirect. Must run at module scope so it executes
+// before expo-router navigates the popup away from the redirect URL (otherwise
+// the popup shows the sign-in page and the token is never handed back).
+if (Platform.OS === 'web') {
+  WebBrowser.maybeCompleteAuthSession();
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {

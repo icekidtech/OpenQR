@@ -10,6 +10,11 @@ import (
 
 const userColumns = "id, email, name, avatar_url, created_at, updated_at"
 
+// userColumnsQualified is used in JOIN queries where both sides define
+// overlapping column names (e.g. created_at) to avoid "column reference is
+// ambiguous" errors.
+const userColumnsQualified = "u.id, u.email, u.name, u.avatar_url, u.created_at, u.updated_at"
+
 func scanUser(row pgx.Row) (*User, error) {
 	var u User
 	err := row.Scan(&u.ID, &u.Email, &u.Name, &u.AvatarURL, &u.CreatedAt, &u.UpdatedAt)
@@ -39,7 +44,7 @@ func (s *Store) UpsertUser(ctx context.Context, provider, sub string, email, nam
 
 	// 1. Look up the user by provider identity.
 	u, err := scanUser(tx.QueryRow(ctx, `
-		SELECT `+userColumns+`
+		SELECT `+userColumnsQualified+`
 		FROM users u
 		JOIN user_identities ui ON ui.user_id = u.id
 		WHERE ui.provider = $1 AND ui.provider_sub = $2`, provider, sub))

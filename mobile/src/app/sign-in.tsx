@@ -44,7 +44,7 @@ function WebSignIn() {
     setBusy('apple');
     try {
       const request = new AuthSession.AuthRequest({
-        clientId: process.env.EXPO_PUBLIC_APPLE_WEB_CLIENT_ID,
+        clientId: process.env.EXPO_PUBLIC_APPLE_WEB_CLIENT_ID ?? '',
         scopes: ['name', 'email'],
         redirectUri,
         responseType: AuthSession.ResponseType.IdToken,

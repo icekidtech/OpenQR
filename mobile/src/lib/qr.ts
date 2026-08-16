@@ -1,6 +1,5 @@
 import { Platform } from 'react-native';
 import * as FileSystem from 'expo-file-system';
-import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
 import { captureRef } from 'react-native-view-shot';
 import QRCodeLib from 'qrcode';
@@ -73,7 +72,12 @@ async function ensureFileUri(uri: string): Promise<string> {
 }
 
 export async function savePngToLibrary(uri: string): Promise<void> {
+  // expo-media-library has no web implementation — lazy-load it on native only.
+  if (Platform.OS === 'web') {
+    throw new Error('Saving to the photo library is only available on iOS and Android.');
+  }
   const localUri = await ensureFileUri(uri);
+  const MediaLibrary = await import('expo-media-library');
   const perm = await MediaLibrary.requestPermissionsAsync(true);
   if (!perm.granted) {
     throw new Error('Photo library permission was denied.');
