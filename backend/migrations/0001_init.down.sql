@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS refresh_tokens;
+DROP TABLE IF EXISTS qr_codes;
+DROP TABLE IF EXISTS batches;
+DROP TABLE IF EXISTS user_identities;
+DROP TABLE IF EXISTS users;
